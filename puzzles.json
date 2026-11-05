@@ -4,7 +4,7 @@
   "2026-11-05": [
     {"a": "Puppy", "b": "Dog", "c": "lamb", "ans": ["sheep", "ewe", "ram"]},
     {"a": "Wolf", "b": "Pack", "c": "Lion", "ans": ["pride"]},
-    {"a": "Bee", "b": "Hive", "c": "Ant", "ans": ["colony", "anthill", "ant hill", "nest"]},
+    {"a": "Bee", "b": "Hive", "c": "Ant", "ans": ["colony", "anthill", "hill", "ant hill", "nest"]},
     {"a": "Equine", "b": "Horse", "c": "Bovine", "ans": ["cow", "cattle", "cows", "bull", "steer"]},
     {"a": "Dollar", "b": "USA", "c": "yen", "ans": ["Japan"]},
     {"a": "Stalactite", "b": "Ceiling", "c": "Stalagmite", "ans": ["floor", "ground"]},
