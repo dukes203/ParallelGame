@@ -288,18 +288,28 @@
   var idx=0, results=new Array(12).fill(null), startTs=0, timer=null, finished=false;
   var lastRun=null;
 
-  // short chime on correct answer (Web Audio API, no external file)
+  // short woodblock click on correct answer (Web Audio API, no external file)
   var audioCtx=null;
   function chime(){
     try{
       if(!audioCtx) audioCtx=new (window.AudioContext||window.webkitAudioContext)();
-      var osc=audioCtx.createOscillator(), gain=audioCtx.createGain();
-      osc.type="sine"; osc.frequency.setValueAtTime(880,audioCtx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(1320,audioCtx.currentTime+0.08);
-      gain.gain.setValueAtTime(0.18,audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+0.22);
-      osc.connect(gain); gain.connect(audioCtx.destination);
-      osc.start(); osc.stop(audioCtx.currentTime+0.22);
+      var now=audioCtx.currentTime;
+      // high triangle tap
+      var o1=audioCtx.createOscillator(), g1=audioCtx.createGain();
+      o1.type="triangle"; o1.frequency.setValueAtTime(2200,now);
+      g1.gain.setValueAtTime(0.0001,now);
+      g1.gain.exponentialRampToValueAtTime(0.16,now+0.001);
+      g1.gain.exponentialRampToValueAtTime(0.0001,now+0.046);
+      o1.connect(g1); g1.connect(audioCtx.destination);
+      o1.start(now); o1.stop(now+0.1);
+      // low sine body
+      var o2=audioCtx.createOscillator(), g2=audioCtx.createGain();
+      o2.type="sine"; o2.frequency.setValueAtTime(900,now);
+      g2.gain.setValueAtTime(0.0001,now);
+      g2.gain.exponentialRampToValueAtTime(0.1,now+0.001);
+      g2.gain.exponentialRampToValueAtTime(0.0001,now+0.061);
+      o2.connect(g2); g2.connect(audioCtx.destination);
+      o2.start(now); o2.stop(now+0.1);
     }catch(e){}
   }
 
