@@ -29,5 +29,35 @@
     {"a": "Trump", "b": "USA", "c": "Ramaphosa", "ans": ["South Africa", "RSA", "SA"]},
     {"a": "Holi", "b": "Color", "c": "Diwali", "ans": ["Light"]},
     {"a": "Beer", "b": "Brewer", "c": "Wine", "ans": ["Vintner", "Vigneron", "Oenologist"]}
+  ],
+
+    "2026-11-07": [
+    {"a": "Dozen", "b": "12", "c": "Score", "ans": ["20", "twenty"]},
+    {"a": "Pumpkin", "b": "Pie", "c": "Banana", "ans": ["bread"]},
+    {"a": "Dog", "b": "Puppy", "c": "Kangaroo", "ans": ["Joey"]},
+    {"a": "Grape", "b": "Vinyard", "c": "Cranberry", "ans": ["Bog"]},
+    {"a": "AI", "b": "San Francisco", "c": "Finance", "ans": ["New York", "NY", "newyork", "new york city"]},
+    {"a": "Bears", "b": "Chicago", "c": "Falcons", "ans": ["Atlanta", "ATL", "Georgia"]},
+    {"a": "Carnegie", "b": "Steel", "c": "Vanderbilt", "ans": ["railroads", "rail", "trains"]},
+    {"a": "Nintendo", "b": "Playing Cards", "c": "Amazon", "ans": ["Books"]},
+    {"a": "AAAA", "b": "BBBB", "c": "CCCC", "ans": ["DDDD", "EEEE"]},
+    {"a": "AAAA", "b": "BBBB", "c": "CCCC", "ans": ["DDDD", "EEEE"]},
+    {"a": "AAAA", "b": "BBBB", "c": "CCCC", "ans": ["DDDD", "EEEE"]},
+    {"a": "AAAA", "b": "BBBB", "c": "CCCC", "ans": ["DDDD", "EEEE"]},
+  ],
+
+      "2026-11-08": [
+    {"a": "AAAA", "b": "BBBB", "c": "CCCC", "ans": ["DDDD", "EEEE"]},
+    {"a": "AAAA", "b": "BBBB", "c": "CCCC", "ans": ["DDDD", "EEEE"]},
+    {"a": "AAAA", "b": "BBBB", "c": "CCCC", "ans": ["DDDD", "EEEE"]},
+    {"a": "AAAA", "b": "BBBB", "c": "CCCC", "ans": ["DDDD", "EEEE"]},
+    {"a": "AAAA", "b": "BBBB", "c": "CCCC", "ans": ["DDDD", "EEEE"]},
+    {"a": "AAAA", "b": "BBBB", "c": "CCCC", "ans": ["DDDD", "EEEE"]},
+    {"a": "AAAA", "b": "BBBB", "c": "CCCC", "ans": ["DDDD", "EEEE"]},
+    {"a": "AAAA", "b": "BBBB", "c": "CCCC", "ans": ["DDDD", "EEEE"]},
+    {"a": "AAAA", "b": "BBBB", "c": "CCCC", "ans": ["DDDD", "EEEE"]},
+    {"a": "AAAA", "b": "BBBB", "c": "CCCC", "ans": ["DDDD", "EEEE"]},
+    {"a": "AAAA", "b": "BBBB", "c": "CCCC", "ans": ["DDDD", "EEEE"]},
+    {"a": "AAAA", "b": "BBBB", "c": "CCCC", "ans": ["DDDD", "EEEE"]},
   ]
 }
