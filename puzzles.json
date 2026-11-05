@@ -1,0 +1,33 @@
+{
+  "_README": "Each key is a date (YYYY-MM-DD in your players' local time). Each value is an array of exactly 12 clues, ordered easy to hard. A clue is {a, b, c, ans}: the game shows 'a is to b what c is to ___', and ans is the list of accepted answers (first one shows in the answer key). Matching ignores case, spaces, punctuation, and leading a/an/the, so add real synonyms and common spellings. 'd' is optional and ignored for authored days. Any date not listed here falls back to the built-in bank.",
+
+  "2026-11-05": [
+    {"a": "Puppy", "b": "Dog", "c": "Kitten", "ans": ["cat"]},
+    {"a": "Hot", "b": "Cold", "c": "Up", "ans": ["down"]},
+    {"a": "Bee", "b": "Hive", "c": "Ant", "ans": ["colony", "anthill", "ant hill", "nest"]},
+    {"a": "Author", "b": "Book", "c": "Composer", "ans": ["symphony", "song", "music", "score"]},
+    {"a": "Botswana", "b": "Pula", "c": "Japan", "ans": ["yen"]},
+    {"a": "Novel", "b": "Chapter", "c": "Symphony", "ans": ["movement", "movements"]},
+    {"a": "Sahara", "b": "Africa", "c": "Gobi", "ans": ["asia"]},
+    {"a": "Cartographer", "b": "Maps", "c": "Lexicographer", "ans": ["dictionaries", "dictionary", "words"]},
+    {"a": "Monet", "b": "Impressionism", "c": "Dali", "ans": ["surrealism"]},
+    {"a": "Oxygen", "b": "Respiration", "c": "Chlorophyll", "ans": ["photosynthesis"]},
+    {"a": "Stalactite", "b": "Ceiling", "c": "Stalagmite", "ans": ["floor", "ground"]},
+    {"a": "Watt", "b": "Power", "c": "Volt", "ans": ["voltage", "potential", "electric potential", "potential difference"]}
+  ],
+
+  "2026-11-06": [
+    {"a": "Day", "b": "Night", "c": "Black", "ans": ["white"]},
+    {"a": "Hand", "b": "Glove", "c": "Foot", "ans": ["sock", "shoe", "socks", "shoes"]},
+    {"a": "Doctor", "b": "Patient", "c": "Teacher", "ans": ["student", "pupil", "students"]},
+    {"a": "Caterpillar", "b": "Butterfly", "c": "Tadpole", "ans": ["frog", "toad"]},
+    {"a": "USA", "b": "Dollar", "c": "India", "ans": ["rupee", "rupees"]},
+    {"a": "Thermometer", "b": "Temperature", "c": "Barometer", "ans": ["pressure", "air pressure", "atmospheric pressure"]},
+    {"a": "Egypt", "b": "Cairo", "c": "Kenya", "ans": ["nairobi"]},
+    {"a": "Ichthyology", "b": "Fish", "c": "Ornithology", "ans": ["birds", "bird"]},
+    {"a": "Richter", "b": "Earthquakes", "c": "Saffir-Simpson", "ans": ["hurricanes", "hurricane", "cyclones", "tropical cyclones"]},
+    {"a": "Smith", "b": "Capitalism", "c": "Marx", "ans": ["communism", "socialism", "marxism"]},
+    {"a": "Entomology", "b": "Insects", "c": "Herpetology", "ans": ["reptiles", "amphibians", "reptiles and amphibians"]},
+    {"a": "Oenophile", "b": "Wine", "c": "Bibliophile", "ans": ["books", "book", "literature"]}
+  ]
+}
