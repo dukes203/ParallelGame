@@ -2,18 +2,18 @@
   "_README": "Each key is a date (YYYY-MM-DD in your players' local time). Each value is an array of exactly 12 clues, ordered easy to hard. A clue is {a, b, c, ans}: the game shows 'a is to b what c is to ___', and ans is the list of accepted answers (first one shows in the answer key). Matching ignores case, spaces, punctuation, and leading a/an/the, so add real synonyms and common spellings. 'd' is optional and ignored for authored days. Any date not listed here falls back to the built-in bank.",
 
   "2026-11-05": [
-    {"a": "Puppy", "b": "Dog", "c": "Kitten", "ans": ["cat"]},
-    {"a": "Hot", "b": "Cold", "c": "Up", "ans": ["down"]},
+    {"a": "Puppy", "b": "Dog", "c": "lamb", "ans": ["sheep", "ewe", "ram"]},
+    {"a": "Wolf", "b": "Pack", "c": "Lion", "ans": ["pride"]},
     {"a": "Bee", "b": "Hive", "c": "Ant", "ans": ["colony", "anthill", "ant hill", "nest"]},
-    {"a": "Author", "b": "Book", "c": "Composer", "ans": ["symphony", "song", "music", "score"]},
-    {"a": "Botswana", "b": "Pula", "c": "Japan", "ans": ["yen"]},
-    {"a": "Novel", "b": "Chapter", "c": "Symphony", "ans": ["movement", "movements"]},
-    {"a": "Sahara", "b": "Africa", "c": "Gobi", "ans": ["asia"]},
-    {"a": "Cartographer", "b": "Maps", "c": "Lexicographer", "ans": ["dictionaries", "dictionary", "words"]},
-    {"a": "Monet", "b": "Impressionism", "c": "Dali", "ans": ["surrealism"]},
-    {"a": "Oxygen", "b": "Respiration", "c": "Chlorophyll", "ans": ["photosynthesis"]},
+    {"a": "Equine", "b": "Horse", "c": "Bovine", "ans": ["cow", "cattle", "cows", "bull", "steer"]},
+    {"a": "Dollar", "b": "USA", "c": "yen", "ans": ["Japan"]},
     {"a": "Stalactite", "b": "Ceiling", "c": "Stalagmite", "ans": ["floor", "ground"]},
-    {"a": "Watt", "b": "Power", "c": "Volt", "ans": ["voltage", "potential", "electric potential", "potential difference"]}
+    {"a": "Sahara", "b": "Africa", "c": "Gobi", "ans": ["asia"]},
+    {"a": "Grazing", "b": "Grass", "c": "Browsing", "ans": ["leaf", "leaves", "bush", "bushes", "shrubs", "shrub", "trees", "tree"]},
+    {"a": "Au", "b": "Gold", "c": "Fe", "ans": ["iron"]},
+    {"a": "Oxygen", "b": "Respiration", "c": "Chlorophyll", "ans": ["photosynthesis"]},
+    {"a": "Cardiology", "b": "Heart", "c": "Nephrology", "ans": ["kidney", "kidneys"]},
+    {"a": "Novel", "b": "Chapter", "c": "Symphony", "ans": ["movement", "movements"]}
   ],
 
   "2026-11-06": [
