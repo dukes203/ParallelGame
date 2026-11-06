@@ -20,7 +20,7 @@
     {"a": "London", "b": "England", "c": "Ottowa", "ans": ["Canada"]},
     {"a": "Dress", "b": "Seamstress", "c": "Shoe", "ans": ["Cobbler"]},
     {"a": "Athena", "b": "Wisdom", "c": "Nike", "ans": ["Victory", "victory in battle"]},
-    {"a": "Karl Marx", "b": "Communism", "c": "John Smith", "ans": ["capitalism"]},
+    {"a": "Karl Marx", "b": "Communism", "c": "Adam Smith", "ans": ["capitalism"]},
     {"a": "Japan", "b": "Yen", "c": "India", "ans": ["rupee", "rupees"]},
     {"a": "Thermometer", "b": "Temperature", "c": "Barometer", "ans": ["pressure", "air pressure", "atmospheric pressure"]},
     {"a": "Left", "b": "Port", "c": "Right", "ans": ["starboard", "steerboard"]},
