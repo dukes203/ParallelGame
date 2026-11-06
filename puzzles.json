@@ -43,7 +43,7 @@
     {"a": "H", "b": "Hydrogen", "c": "K", "ans": ["potasium", "potassium"]},
     {"a": "Iron and Carbon", "b": "Steel", "c": "Copper and Tin", "ans": ["bronze"]},
     {"a": "AAAA", "b": "BBBB", "c": "CCCC", "ans": ["DDDD", "EEEE"]},
-    {"a": "AAAA", "b": "BBBB", "c": "CCCC", "ans": ["DDDD", "EEEE"]},
+    {"a": "AAAA", "b": "BBBB", "c": "CCCC", "ans": ["DDDD", "EEEE"]}
   ],
 
       "2026-11-08": [
@@ -58,6 +58,6 @@
     {"a": "AAAA", "b": "BBBB", "c": "CCCC", "ans": ["DDDD", "EEEE"]},
     {"a": "AAAA", "b": "BBBB", "c": "CCCC", "ans": ["DDDD", "EEEE"]},
     {"a": "AAAA", "b": "BBBB", "c": "CCCC", "ans": ["DDDD", "EEEE"]},
-    {"a": "AAAA", "b": "BBBB", "c": "CCCC", "ans": ["DDDD", "EEEE"]},
+    {"a": "AAAA", "b": "BBBB", "c": "CCCC", "ans": ["DDDD", "EEEE"]}
   ]
 }
