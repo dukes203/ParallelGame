@@ -1,0 +1,639 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Parallel</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap">
+<style>
+  /* Layout: one leaf of ruled ledger paper. Solved entries accumulate down the sheet and the
+     live question sits at the foot of the stack, so finishing leaves you a filled page rather
+     than a scoreboard. One family throughout (EB Garamond); ink-blue is what you wrote,
+     rust is the margin rule and the answers you missed. */
+  :root{
+    color-scheme:light;
+    --desk:#d9dfcf; --leaf:#e9ece2; --ink:#1b1f1a; --soft:#77806e;
+    --rule:#9fb6c4; --marg:#b4564c; --pen:#243f7d;
+    --good:#243f7d; --bad:#b4564c;
+    --edge:rgba(27,31,26,.17);
+    --shadow:0 1px 0 rgba(0,0,0,.05), 0 16px 38px -24px rgba(28,38,22,.55);
+    --fbook:"EB Garamond", Georgia, "Times New Roman", serif;
+    --lh:26px;
+  }
+  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+    --desk:#13160e; --leaf:#1e2219; --ink:#e4e7db; --soft:#8a907d;
+    --rule:#3d4c54; --marg:#a8574a; --pen:#95aee3;
+    --good:#95aee3; --bad:#c2705f;
+    --edge:rgba(228,231,219,.15);
+    --shadow:0 1px 0 rgba(255,255,255,.03), 0 18px 40px -22px rgba(0,0,0,.85);
+    color-scheme:dark;
+  }}
+  :root[data-theme="dark"]{
+    --desk:#13160e; --leaf:#1e2219; --ink:#e4e7db; --soft:#8a907d;
+    --rule:#3d4c54; --marg:#a8574a; --pen:#95aee3;
+    --good:#95aee3; --bad:#c2705f;
+    --edge:rgba(228,231,219,.15);
+    --shadow:0 1px 0 rgba(255,255,255,.03), 0 18px 40px -22px rgba(0,0,0,.85);
+    color-scheme:dark;
+  }
+
+  *{box-sizing:border-box}
+  [hidden]{display:none!important}
+  html,body{height:100%}
+  img{max-width:100%}
+  body{
+    margin:0; background:var(--desk); color:var(--ink);
+    font-family:var(--fbook); font-size:17px; line-height:1.5;
+    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+  }
+  .wrap{
+    min-height:100%; display:flex; flex-direction:column; align-items:center;
+    padding-top:max(20px, env(safe-area-inset-top,0px));
+    padding-bottom:max(34px, env(safe-area-inset-bottom,0px));
+    padding-left:max(16px, env(safe-area-inset-left,0px));
+    padding-right:max(16px, env(safe-area-inset-right,0px));
+  }
+  .col{width:100%; max-width:470px; display:flex; flex-direction:column; flex:1 1 auto}
+
+  /* running head */
+  .top{display:flex; align-items:baseline; justify-content:space-between; gap:12px; padding-bottom:7px}
+  .brand{font-variant:small-caps; font-weight:600; font-size:23px; letter-spacing:.07em}
+  .ghost{background:none; border:0; color:var(--soft); cursor:pointer; font-family:var(--fbook); font-size:16px; padding:4px 7px; border-radius:6px; line-height:1}
+  .ghost:hover{color:var(--ink)}
+  .ghost:focus-visible{outline:1.5px solid var(--pen); outline-offset:2px}
+  .rules-top{height:0; border-top:2px solid var(--ink)}
+  .rules-top2{height:0; border-top:.75px solid var(--ink); margin-top:2px; margin-bottom:16px}
+
+  .sub{font-size:12.5px; line-height:var(--lh); color:var(--soft); letter-spacing:.17em; text-transform:uppercase; font-variant-numeric:tabular-nums}
+
+  /* the leaf */
+  .leaf{
+    background:var(--leaf); border:1px solid var(--edge); border-radius:2px; box-shadow:var(--shadow);
+    position:relative; overflow:hidden;
+  }
+  .leaf::before{content:""; position:absolute; left:34px; top:0; bottom:0; width:1.3px; background:var(--marg); opacity:.7}
+  .sheet{
+    padding:13px 15px 13px 46px; min-height:calc(var(--lh) * 10);
+    background-image:repeating-linear-gradient(transparent 0 calc(var(--lh) - 1px), var(--rule) calc(var(--lh) - 1px) var(--lh));
+    background-position:0 13px; background-repeat:repeat;
+  }
+  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .sheet{ background-image:repeating-linear-gradient(transparent 0 calc(var(--lh) - 1px), var(--rule) calc(var(--lh) - 1px) var(--lh)); opacity:1 } }
+
+  /* start panel sits on the same leaf */
+  .rules{list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:0}
+  .rules li{display:flex; gap:11px; align-items:baseline; font-size:16.5px; line-height:var(--lh)}
+  .rules .n{color:var(--marg); font-variant:small-caps; font-size:14px; letter-spacing:.09em; min-width:18px}
+  .rules b{font-weight:600}
+  .startfoot{margin-top:var(--lh)}
+
+  .btn{appearance:none; cursor:pointer; width:100%; background:transparent; color:var(--pen);
+    border:1.5px solid var(--pen); font-family:var(--fbook); font-variant:small-caps; font-weight:600;
+    font-size:19px; letter-spacing:.1em; padding:0 16px; border-radius:2px;
+    height:calc(var(--lh) * 2); line-height:calc(var(--lh) * 2 - 3px);
+    transition:background .15s ease, color .15s ease}
+  .btn:hover{background:var(--pen); color:var(--leaf)}
+  .btn:active{transform:translateY(1px)}
+  .btn:focus-visible{outline:2px solid var(--pen); outline-offset:2px}
+
+  /* play */
+  .hud{display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin-bottom:6px}
+  .clock{font-size:25px; font-variant-numeric:tabular-nums lining-nums; letter-spacing:.01em}
+  .clock.warn{color:var(--marg)}
+  .count{font-size:25px; color:var(--soft); font-variant-numeric:tabular-nums lining-nums}
+  .count b{color:var(--ink); font-weight:600}
+  .bar{height:2px; width:100%; background:var(--edge); overflow:hidden; margin-bottom:12px}
+  .bar > i{display:block; height:100%; width:100%; background:var(--pen); transform-origin:left; transition:transform .1s linear, background .2s ease}
+  .bar.warn > i{background:var(--marg)}
+
+  .prior{list-style:none; margin:0; padding:0}
+  .prior li{font-size:14.5px; line-height:var(--lh); color:var(--soft); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  .prior li i{font-style:italic; font-weight:500; color:var(--pen)}
+  .prior.clipped{-webkit-mask-image:linear-gradient(to bottom, transparent 0, #000 22px); mask-image:linear-gradient(to bottom, transparent 0, #000 22px)}
+
+  .now{font-size:19px; line-height:var(--lh); margin:var(--lh) 0 0 0; color:var(--ink); text-wrap:balance}
+  .now em{font-style:italic; color:var(--soft); font-size:17px}
+  .now b{font-weight:600}
+  .answer{display:flex; align-items:stretch; gap:9px; height:var(--lh); margin:0}
+  .answer input{
+    flex:1 1 auto; min-width:0; background:transparent; color:var(--pen);
+    border:0; border-bottom:1.5px solid var(--pen); border-radius:0; padding:0 2px;
+    font-family:var(--fbook); font-style:italic; font-weight:500; font-size:19px;
+    height:var(--lh); line-height:calc(var(--lh) - 2px);
+    outline:none; transition:border-color .12s ease;
+  }
+  .answer input::placeholder{color:var(--soft); font-style:italic; opacity:.65}
+  .answer input:focus{border-bottom-width:2px}
+  .answer input.bad{color:var(--bad); border-bottom-color:var(--bad); animation:shake .32s}
+  .answer input.good{color:var(--pen)}
+  @keyframes shake{10%,90%{transform:translateX(-2px)}30%,70%{transform:translateX(4px)}50%{transform:translateX(-5px)}}
+  @media (prefers-reduced-motion:reduce){ .answer input.bad{animation:none} }
+
+  /* index of entries, in the foot of the leaf */
+  .leaffoot{display:flex; align-items:center; justify-content:space-between; gap:8px;
+    padding:9px 13px 10px 40px; border-top:1px solid var(--edge)}
+  .ticker{display:flex; gap:1px; flex-wrap:nowrap; min-width:0}
+  .pip{flex:0 0 auto; min-width:0; height:22px; padding:0 4px; background:transparent; border:0; border-bottom:1.5px solid transparent;
+    cursor:pointer; font-family:var(--fbook); font-size:14.5px; color:var(--soft);
+    font-variant-numeric:tabular-nums; line-height:20px; border-radius:0}
+  .pip:hover{color:var(--ink)}
+  .pip:focus-visible{outline:1.5px solid var(--pen); outline-offset:1px}
+  .pip.good{color:var(--pen); border-bottom-color:var(--pen)}
+  .pip.cur{color:var(--ink); font-weight:600; border-bottom-color:var(--marg); border-bottom-width:2px}
+  .skip{flex:0 0 auto; background:transparent; border:0; color:var(--soft); cursor:pointer;
+    font-family:var(--fbook); font-variant:small-caps; font-size:16px; letter-spacing:.09em; padding:2px 2px}
+  .skip:hover{color:var(--marg)}
+  .skip:focus-visible{outline:1.5px solid var(--pen); outline-offset:2px}
+
+  /* results: the finished page */
+  .score{display:flex; align-items:baseline; gap:9px; height:calc(var(--lh) * 2); line-height:calc(var(--lh) * 2)}
+  .score .big{font-size:44px; font-weight:600; font-variant-numeric:lining-nums; line-height:calc(var(--lh) * 2)}
+  .score .of{font-size:17px; color:var(--soft); font-variant:small-caps; letter-spacing:.09em}
+  .verdict{font-size:17px; font-style:italic; color:var(--ink); line-height:var(--lh); margin-bottom:var(--lh)}
+  .review{list-style:none; margin:0; padding:0}
+  .review li{font-size:14.5px; line-height:var(--lh); color:var(--soft); display:flex; align-items:baseline}
+  .review li .n{flex:0 0 27px; color:var(--soft); font-variant-numeric:tabular-nums; font-size:12.5px}
+  .review li .d{flex:0 0 13px; color:var(--bad)}
+  .review li .q{flex:1 1 auto; min-width:0}
+  .review li i{font-style:italic; font-weight:500}
+  .review li.got i{color:var(--pen)}
+  .review li.miss i{color:var(--bad)}
+  .statline{display:flex; gap:26px; height:var(--lh); line-height:var(--lh); align-items:baseline; font-variant-numeric:tabular-nums}
+  .stat{display:flex; align-items:baseline; gap:7px}
+  .stat .k{font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--soft)}
+  .stat .v{font-size:18px; font-weight:600}
+  .next{color:var(--soft); font-size:13px; line-height:var(--lh); letter-spacing:.08em; text-transform:uppercase; font-variant-numeric:tabular-nums}
+  .next b{color:var(--ink); font-weight:600}
+
+  .note{border:1px solid var(--marg); border-left-width:3px; border-radius:2px; padding:10px 13px; margin-bottom:14px;
+    font-size:14px; line-height:1.45; color:var(--ink); background:var(--leaf)}
+  .note b{display:block; font-variant:small-caps; font-size:14px; letter-spacing:.11em; color:var(--marg); margin-bottom:2px}
+  .toast{position:fixed; left:50%; bottom:calc(24px + env(safe-area-inset-bottom,0px)); transform:translateX(-50%);
+    background:var(--ink); color:var(--leaf); padding:8px 17px; border-radius:2px; font-size:15px;
+    font-variant:small-caps; letter-spacing:.08em; opacity:0; pointer-events:none; transition:opacity .2s ease}
+  .toast.show{opacity:1}
+  .foot{margin-top:auto; padding-top:22px; text-align:center; color:var(--soft); font-size:13px;
+    font-variant:small-caps; letter-spacing:.14em}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="col">
+    <header class="top">
+      <div class="brand">Parallel</div>
+      <button class="ghost" id="theme" title="Toggle theme" aria-label="Toggle theme">&#9680;</button>
+    </header>
+    <div class="rules-top"></div>
+    <div class="rules-top2"></div>
+
+    <div class="note" id="schednote" hidden></div>
+
+    <section id="start" hidden>
+      <div class="leaf"><div class="sheet">
+        <div class="sub" id="pz-label">Parallel &middot; i</div>
+        <ol class="rules">
+          <li><span class="n">i</span><span>Each entry: <b>X is to Y what Z is to ___</b>. Write the missing word.</span></li>
+          <li><span class="n">ii</span><span>Twelve entries, ninety seconds on the clock.</span></li>
+          <li><span class="n">iii</span><span>Right answers set themselves down. Skip to leave one for later, or tap a number to go back.</span></li>
+        </ol>
+        <div class="startfoot"><button class="btn" id="go">Begin</button></div>
+      </div></div>
+    </section>
+
+    <section id="play" hidden>
+      <div class="hud">
+        <div class="clock" id="clock">1:30</div>
+        <div class="count"><b id="qnum">0</b>/12</div>
+      </div>
+      <div class="bar" id="bar"><i id="barfill"></i></div>
+      <div class="leaf">
+        <div class="sheet">
+          <ul class="prior" id="prior"></ul>
+          <div class="now" id="prompt"></div>
+          <div class="answer">
+            <input id="input" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="go" placeholder="&hellip;" aria-label="Your answer">
+          </div>
+        </div>
+        <div class="leaffoot">
+          <div class="ticker" id="ticker"></div>
+          <button class="skip" id="skipbtn">Skip</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="results" hidden>
+      <div class="leaf"><div class="sheet">
+        <div class="sub" id="r-label">Parallel &middot; i</div>
+        <div class="score"><span class="big" id="r-score">0</span><span class="of">of twelve</span></div>
+        <div class="verdict" id="r-verdict"></div>
+        <ul class="review" id="review"></ul>
+        <div class="statline">
+          <div class="stat"><span class="k">Streak</span><span class="v" id="r-streak">1</span></div>
+        </div>
+        <div class="startfoot"><button class="btn" id="share">Copy result</button></div>
+        <div class="next">Next leaf in <b id="r-next">00:00:00</b></div>
+      </div></div>
+    </section>
+
+    <div class="foot">Parallel &middot; a daily analogy sprint</div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  "use strict";
+  var DURATION = 90;               // seconds on the clock
+  var EPOCH = new Date(2026,10,5); // local midnight of launch day -> puzzle #1 (JS months are 0-based: 10 = November)
+
+  // Fallback bank. Used only on dates that puzzles.json doesn't cover, so the game never shows a blank screen.
+  var BANK = [
+    {a:"Puppy",b:"Dog",c:"Kitten",ans:["cat"],d:1},
+    {a:"Hand",b:"Glove",c:"Foot",ans:["sock","shoe","socks","shoes"],d:1},
+    {a:"Hot",b:"Cold",c:"Up",ans:["down"],d:1},
+    {a:"Day",b:"Night",c:"Black",ans:["white"],d:1},
+    {a:"King",b:"Queen",c:"Prince",ans:["princess"],d:1},
+    {a:"Big",b:"Small",c:"Tall",ans:["short"],d:1},
+    {a:"Cow",b:"Calf",c:"Dog",ans:["puppy"],d:1},
+    {a:"Bee",b:"Hive",c:"Ant",ans:["colony","anthill","ant hill","nest"],d:2},
+    {a:"Doctor",b:"Patient",c:"Teacher",ans:["student","pupil","students"],d:2},
+    {a:"Author",b:"Book",c:"Composer",ans:["symphony","song","music","score","songs"],d:2},
+    {a:"Fish",b:"Swim",c:"Bird",ans:["fly"],d:2},
+    {a:"Car",b:"Road",c:"Train",ans:["track","tracks","rail","rails","railway","railroad"],d:2},
+    {a:"Teacher",b:"School",c:"Chef",ans:["kitchen","restaurant"],d:2},
+    {a:"Finger",b:"Hand",c:"Toe",ans:["foot"],d:2},
+    {a:"Caterpillar",b:"Butterfly",c:"Tadpole",ans:["frog","toad"],d:2},
+    {a:"Botswana",b:"Pula",c:"Japan",ans:["yen"],d:3},
+    {a:"USA",b:"Dollar",c:"India",ans:["rupee","rupees"],d:3},
+    {a:"Herd",b:"Cattle",c:"Pod",ans:["whales","whale","dolphins","dolphin"],d:3},
+    {a:"Thermometer",b:"Temperature",c:"Barometer",ans:["pressure","air pressure","atmospheric pressure"],d:3},
+    {a:"Sahara",b:"Africa",c:"Gobi",ans:["asia"],d:3},
+    {a:"Novel",b:"Chapter",c:"Symphony",ans:["movement","movements"],d:3},
+    {a:"Triangle",b:"Three",c:"Pentagon",ans:["five","5"],d:3},
+    {a:"Egypt",b:"Cairo",c:"Kenya",ans:["nairobi"],d:3},
+    {a:"Cartographer",b:"Maps",c:"Lexicographer",ans:["dictionaries","dictionary","words","wordbooks"],d:4},
+    {a:"Ichthyology",b:"Fish",c:"Ornithology",ans:["birds","bird"],d:4},
+    {a:"Celsius",b:"Temperature",c:"Decibel",ans:["sound","loudness","volume","noise","sound intensity"],d:4},
+    {a:"Keynes",b:"Economics",c:"Freud",ans:["psychology","psychoanalysis","mind","the mind"],d:4},
+    {a:"Monet",b:"Impressionism",c:"Dali",ans:["surrealism"],d:4},
+    {a:"Richter",b:"Earthquakes",c:"Saffir-Simpson",ans:["hurricanes","hurricane","cyclones","cyclone","tropical cyclones"],d:4},
+    {a:"Smith",b:"Capitalism",c:"Marx",ans:["communism","socialism","marxism"],d:4},
+    {a:"Oxygen",b:"Respiration",c:"Chlorophyll",ans:["photosynthesis"],d:4},
+    {a:"Sculptor",b:"Clay",c:"Blacksmith",ans:["iron","metal","steel"],d:4},
+    {a:"Foal",b:"Horse",c:"Cygnet",ans:["swan"],d:4},
+    {a:"Kilogram",b:"Mass",c:"Second",ans:["time"],d:4},
+    {a:"Entomology",b:"Insects",c:"Herpetology",ans:["reptiles","amphibians","reptiles and amphibians","reptile"],d:5},
+    {a:"Stalactite",b:"Ceiling",c:"Stalagmite",ans:["floor","ground","the floor"],d:5},
+    {a:"Watt",b:"Power",c:"Volt",ans:["voltage","potential","electric potential","potential difference","electromotive force"],d:5},
+    {a:"Oenophile",b:"Wine",c:"Bibliophile",ans:["books","book","literature"],d:5},
+    {a:"Cacophony",b:"Harsh",c:"Euphony",ans:["pleasant","sweet","melodious","harmonious","pleasing"],d:5},
+    {a:"Hygrometer",b:"Humidity",c:"Anemometer",ans:["wind","wind speed","windspeed","air speed"],d:5}
+  ];
+  var SHAPE = {1:2,2:2,3:3,4:3,5:2};
+
+  function seededRng(str){
+    var h = 1779033703 ^ str.length;
+    for (var i=0;i<str.length;i++){ h = Math.imul(h ^ str.charCodeAt(i), 3432918353); h = h<<13 | h>>>19; }
+    return function(){ h = Math.imul(h ^ h>>>16, 2246822507); h = Math.imul(h ^ h>>>13, 3266489909); return ((h ^= h>>>16)>>>0)/4294967296; };
+  }
+  function shuffled(arr, rng){ var a=arr.slice(); for (var i=a.length-1;i>0;i--){ var j=Math.floor(rng()*(i+1)); var t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
+  function pickDaily(dateStr){
+    var rng=seededRng("parallel-"+dateStr), byD={1:[],2:[],3:[],4:[],5:[]}, out=[], d;
+    BANK.forEach(function(q){ byD[q.d].push(q); });
+    for (d=1; d<=5; d++){ out=out.concat(shuffled(byD[d],rng).slice(0,SHAPE[d])); }
+    return out;
+  }
+  function norm(s){
+    return (s||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"")
+      .replace(/[^a-z0-9 ]/g," ").replace(/\b(a|an|the)\b/g," ").replace(/\s+/g," ").trim();
+  }
+  function isCorrect(input,q){ var n=norm(input); if(!n) return false; return q.ans.some(function(a){return norm(a)===n;}); }
+
+  function localDateStr(dt){ var y=dt.getFullYear(), m=String(dt.getMonth()+1).padStart(2,"0"), d=String(dt.getDate()).padStart(2,"0"); return y+"-"+m+"-"+d; }
+  function puzzleNumber(dt){ var a=new Date(dt.getFullYear(),dt.getMonth(),dt.getDate()); var b=new Date(EPOCH.getFullYear(),EPOCH.getMonth(),EPOCH.getDate()); return Math.floor((a-b)/86400000)+1; }
+  function mmss(sec){ sec=Math.max(0,Math.ceil(sec)); var m=Math.floor(sec/60), s=sec%60; return m+":"+String(s).padStart(2,"0"); }
+
+  // ---- authored puzzles (puzzles.json) ----
+  function validDay(arr){
+    return Array.isArray(arr) && arr.length>=12 && arr.slice(0,12).every(function(q){
+      return q && q.a && q.b && q.c && Array.isArray(q.ans) && q.ans.length>0;
+    });
+  }
+  // Fetches puzzles.json and reports WHY it failed, so a bad file is visible
+  // instead of silently falling back to the bank.
+  function loadSchedule(cb){
+    if(!window.fetch){ cb(null,"this browser is too old to load puzzles.json"); return; }
+    fetch("puzzles.json?v="+Date.now(), {cache:"no-store"})
+      .then(function(r){
+        if(!r.ok) throw new Error("puzzles.json wasn't found on the server (HTTP "+r.status+"). Is it uploaded next to index.html?");
+        return r.text();
+      })
+      .then(function(txt){
+        var j;
+        try{ j=JSON.parse(txt); }
+        catch(e){ throw new Error("puzzles.json has a syntax error, so no day in it can load. "+e.message); }
+        cb(j,"");
+      })
+      .catch(function(e){ cb(null, e.message||"puzzles.json could not be loaded"); });
+  }
+
+  var LS="parallel.v1";
+  function load(){ try{ return JSON.parse(localStorage.getItem(LS))||{}; }catch(e){ return {}; } }
+  function save(o){ try{ localStorage.setItem(LS, JSON.stringify(o)); }catch(e){} }
+
+  var $=function(id){return document.getElementById(id);};
+  var now=new Date(), DATE=localDateStr(now), PNUM=puzzleNumber(now);
+  var DAILY=pickDaily(DATE);  // overwritten by authored set if puzzles.json covers today
+  var Q=[];
+  var store=load();
+
+  $("theme").addEventListener("click",function(){
+    var cur=document.documentElement.getAttribute("data-theme");
+    var isDark = cur ? cur==="dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+    document.documentElement.setAttribute("data-theme", isDark?"light":"dark");
+  });
+
+  var schedStatus="";  // non-empty means today's authored set did NOT load; explains why
+  var idx=0, results=new Array(12).fill(null), startTs=0, timer=null, finished=false;
+  var locked=false;  // clue is solved: ignore typing, but keep the field focused
+  var lastRun=null;
+
+  // short woodblock click on correct answer (Web Audio API, no external file)
+  var audioCtx=null;
+  function chime(){
+    try{
+      if(!audioCtx) audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+      var now=audioCtx.currentTime;
+      // high triangle tap
+      var o1=audioCtx.createOscillator(), g1=audioCtx.createGain();
+      o1.type="triangle"; o1.frequency.setValueAtTime(2200,now);
+      g1.gain.setValueAtTime(0.0001,now);
+      g1.gain.exponentialRampToValueAtTime(0.16,now+0.001);
+      g1.gain.exponentialRampToValueAtTime(0.0001,now+0.046);
+      o1.connect(g1); g1.connect(audioCtx.destination);
+      o1.start(now); o1.stop(now+0.1);
+      // low sine body
+      var o2=audioCtx.createOscillator(), g2=audioCtx.createGain();
+      o2.type="sine"; o2.frequency.setValueAtTime(900,now);
+      g2.gain.setValueAtTime(0.0001,now);
+      g2.gain.exponentialRampToValueAtTime(0.1,now+0.001);
+      g2.gain.exponentialRampToValueAtTime(0.0001,now+0.061);
+      o2.connect(g2); g2.connect(audioCtx.destination);
+      o2.start(now); o2.stop(now+0.1);
+    }catch(e){}
+  }
+
+
+  var ROMAN=["i","ii","iii","iv","v","vi","vii","viii","ix","x","xi","xii"];
+  function esc(t){ return String(t).replace(/[&<>]/g,function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;"}[c]; }); }
+  // one accumulated line: "Carnegie : Steel :: Vanderbilt : railroads"
+  function entryLine(q,answer){
+    return esc(q.a)+" : "+esc(q.b)+" :: "+esc(q.c)+" : <i>"+esc(answer)+"</i>";
+  }
+
+  function show(which){ ["start","play","results"].forEach(function(s){ $(s).hidden = (s!==which); }); }
+
+  function renderPrior(){
+    var ul=$("prior"), rows=[];
+    for(var i=0;i<12;i++){
+      if(i!==idx && results[i]===true) rows.push(entryLine(Q[i], Q[i].ans[0]));
+    }
+    var shown=rows.slice(-6);
+    ul.className = "prior" + (rows.length>shown.length ? " clipped" : "");
+    ul.innerHTML = shown.map(function(r){ return "<li>"+r+"</li>"; }).join("");
+  }
+  function renderPrompt(){
+    var q=Q[idx];
+    $("prompt").innerHTML = '<b>'+esc(q.a)+'</b> <em>is to</em> <b>'+esc(q.b)+
+      '</b> <em>what</em><br><b>'+esc(q.c)+'</b> <em>is to</em>';
+    $("qnum").textContent = solvedCount();
+    renderPrior();
+    var inp=$("input");
+    if(results[idx]===true){
+      inp.value=q.ans[0]; inp.className="good"; locked=true;
+    }else{
+      inp.value=""; inp.className=""; locked=false;
+    }
+    // Never disable or blur this field mid-game. On iOS and Android a
+    // programmatic focus() outside a tap is ignored, so once the keyboard
+    // drops it will not come back without the player tapping the box again.
+    if(document.activeElement!==inp) inp.focus();
+    renderTicker();
+  }
+  function renderTicker(){
+    var t=$("ticker"); t.innerHTML="";
+    for(var i=0;i<12;i++){
+      (function(i){
+        var p=document.createElement("button"); p.type="button"; p.className="pip"; p.textContent=(i+1);
+        if(results[i]===true)p.className+=" good";
+        if(i===idx && !finished)p.className+=" cur";
+        p.setAttribute("aria-label","Entry "+(i+1)+(results[i]===true?", written":""));
+        p.addEventListener("click",function(){ goTo(i); });
+        t.appendChild(p);
+      })(i);
+    }
+  }
+
+  function tick(){
+    var elapsed=(Date.now()-startTs)/1000, remain=DURATION-elapsed;
+    if(remain<=0){ remain=0; $("clock").textContent="0:00"; $("barfill").style.transform="scaleX(0)"; end(); return; }
+    $("clock").textContent=mmss(remain);
+    $("barfill").style.transform="scaleX("+(remain/DURATION)+")";
+    var warn=remain<=15;
+    $("clock").classList.toggle("warn",warn); $("bar").classList.toggle("warn",warn);
+  }
+
+  function startGame(){
+    Q=DAILY;
+    idx=0; results=new Array(12).fill(null); finished=false; startTs=Date.now();
+    show("play"); renderPrompt(); tick();
+    if(timer)clearInterval(timer); timer=setInterval(tick,100);
+  }
+
+  function solvedCount(){ return results.reduce(function(n,r){return n+(r===true?1:0);},0); }
+  function nextPending(from){
+    for(var k=1;k<=12;k++){ var i=(from+k)%12; if(results[i]!==true) return i; }
+    return -1;
+  }
+  function goTo(i){ if(finished)return; idx=i; renderPrompt(); }
+  function goNext(){
+    if(solvedCount()>=12){ end(); return; }
+    var n=nextPending(idx);
+    if(n<0){ end(); return; }
+    if(n===idx){ $("input").focus(); return; }
+    idx=n; renderPrompt();
+  }
+  function markCorrect(){
+    var inp=$("input");
+    results[idx]=true; inp.className="good"; locked=true; chime(); renderTicker();
+    if(solvedCount()>=12){ setTimeout(end,170); return; }
+    setTimeout(goNext,170);
+  }
+  function submit(){
+    if(finished)return;
+    var inp=$("input"), q=Q[idx];
+    if(results[idx]===true) return;
+    if(isCorrect(inp.value,q)){ markCorrect(); }
+    else{
+      if(!norm(inp.value)){ skip(); return; }
+      inp.className="bad"; inp.select();
+    }
+  }
+  function skip(){ if(finished)return; goNext(); }
+
+  function end(){
+    if(finished)return; finished=true;
+    try{ $("input").blur(); }catch(e){}  // drop the keyboard for the results screen
+    if(timer){clearInterval(timer); timer=null;}
+    for(var i=0;i<12;i++){ if(results[i]===null) results[i]=false; }
+    var elapsed=Math.min(DURATION,(Date.now()-startTs)/1000);
+    var correct=results.filter(Boolean).length;
+    var allDone = correct===12;
+    var timeUsed = allDone ? elapsed : DURATION;
+    lastRun={correct:correct, timeUsed:timeUsed, grid:results.map(function(r){return r?1:0;}), questions:Q.slice()};
+    saveResult(correct, timeUsed);
+    renderResults();
+    show("results");
+  }
+
+  function saveResult(correct,timeUsed){
+    var s=load();
+    if(s.lastDate!==DATE){
+      var prev=s.lastDate, y=new Date(now.getFullYear(),now.getMonth(),now.getDate()-1);
+      s.streak = (prev===localDateStr(y)) ? (s.streak||0)+1 : 1;
+      s.lastDate=DATE; s.pnum=PNUM;
+      s.correct=correct; s.timeUsed=Math.round(timeUsed);
+      s.grid=results.map(function(r){return r?1:0;});
+      if(s.bestScore==null || correct>s.bestScore || (correct===s.bestScore && Math.round(timeUsed)<(s.bestTime||1e9))){
+        s.bestScore=correct; s.bestTime=Math.round(timeUsed);
+      }
+      save(s);
+    }
+    store=s;
+  }
+
+  function verdict(c,allDone){
+    if(c===12) return allDone ? "Clean sweep. Every rung." : "Perfect 12.";
+    if(c===11) return "Sharp. One short of the sweep.";
+    if(c===10) return "Sharp. Two short of the sweep.";
+    if(c>=7)  return "Solid run.";
+    if(c>=5)  return "Aggressively mid.";
+    if(c>=3)  return "Rough. The analogies won, and it wasn't close.";
+    if(c===2) return "Two. Both of those were the free ones.";
+    if(c===1) return "One. Technically a score.";
+    return "Zero. A blank sheet of paper ties you.";
+  }
+
+  function renderResults(){
+    var r=lastRun, allDone=r.correct===12;
+    $("r-label").innerHTML = "Parallel &middot; "+(ROMAN[(PNUM-1)%12]||PNUM);
+    $("r-score").textContent=r.correct;
+    $("r-verdict").textContent=verdict(r.correct,allDone);
+    $("r-streak").textContent = store.streak||1;
+
+    var rv=$("review"); rv.innerHTML="";
+    r.questions.forEach(function(q,i){
+      var ok=!!r.grid[i];
+      var row=document.createElement("li");
+      row.className = ok ? "got" : "miss";
+      row.innerHTML='<span class="n">'+ROMAN[i]+'</span>'+
+        '<span class="d">'+(ok?"":"\u2020")+'</span>'+
+        '<span class="q">'+entryLine(q, q.ans[0])+'</span>';
+      rv.appendChild(row);
+    });
+
+    startNextCountdown();
+  }
+
+  var ncTimer=null;
+  function startNextCountdown(){
+    function upd(){
+      var n=new Date(), mid=new Date(n.getFullYear(),n.getMonth(),n.getDate()+1,0,0,0);
+      var r=Math.max(0,(mid-n)/1000), h=Math.floor(r/3600), m=Math.floor((r%3600)/60), s=Math.floor(r%60);
+      $("r-next").textContent=[h,m,s].map(function(x){return String(x).padStart(2,"0");}).join(":");
+    }
+    upd(); if(ncTimer)clearInterval(ncTimer); ncTimer=setInterval(upd,1000);
+  }
+
+  // Where this copy of the game lives, so the share card carries a playable link.
+  // Derived from the address bar, so a custom domain needs no code change.
+  var SITE_URL=(function(){
+    try{
+      if(location.protocol==="file:"||!location.origin||location.origin==="null") return "";
+      return (location.origin+location.pathname).replace(/index\.html$/,"");
+    }catch(e){ return ""; }
+  })();
+
+  function shareText(){
+    var r=lastRun||{correct:store.correct,grid:store.grid||[]};
+    var grid=(r.grid||[]).map(function(x){return x?"🟩":"⬜";}).join("");
+    var head="Parallel #"+PNUM+" — "+r.correct+"/12";
+    return head+"\n"+grid+(SITE_URL?"\n"+SITE_URL:"");
+  }
+  function toast(msg){ var t=$("toast"); t.textContent=msg; t.classList.add("show"); setTimeout(function(){t.classList.remove("show");},1500); }
+  $("share").addEventListener("click",function(){
+    var txt=shareText();
+    function fallback(){ try{ var ta=document.createElement("textarea"); ta.value=txt; document.body.appendChild(ta); ta.select(); document.execCommand("copy"); document.body.removeChild(ta); toast("Copied"); }catch(e){ toast("Press and hold to copy"); } }
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(txt).then(function(){toast("Copied");},fallback);
+    }else fallback();
+  });
+
+  $("input").addEventListener("keydown",function(e){ if(e.key==="Enter"){ e.preventDefault(); submit(); } });
+  // auto-lock as soon as what's typed matches an accepted answer: no Enter needed
+  $("input").addEventListener("input",function(){
+    var inp=$("input");
+    if(finished || locked || results[idx]===true){
+      // A solved clue is effectively read-only, but the field stays focused so
+      // the mobile keyboard survives. Undo stray keystrokes instead of disabling.
+      if(results[idx]===true && Q[idx]) inp.value=Q[idx].ans[0];
+      return;
+    }
+    if(inp.className==="bad") inp.className="";
+    if(isCorrect(inp.value,Q[idx])) markCorrect();
+  });
+  $("skipbtn").addEventListener("click",skip);
+  $("go").addEventListener("click",function(){ startGame(); });
+
+  function boot(){
+    if(schedStatus){
+      var n=$("schednote");
+      n.innerHTML='<b>Playing the built-in bank, not your file</b>';
+      n.appendChild(document.createTextNode(schedStatus));
+      n.hidden=false;
+    }
+    if(store.lastDate===DATE){
+      finished=true;
+      lastRun={correct:store.correct||0, timeUsed:store.timeUsed||DURATION, grid:(store.grid||new Array(12).fill(0)).slice(0,12), questions:DAILY};
+      renderResults();
+      show("results");
+    }else{
+      $("pz-label").innerHTML="Parallel &middot; "+(ROMAN[(PNUM-1)%12]||PNUM);
+      show("start");
+    }
+  }
+
+  // Load today's authored set (if any), then start.
+  loadSchedule(function(sched, err){
+    if(err){
+      schedStatus = err;
+    }else{
+      var authored = sched[DATE];
+      var dates = Object.keys(sched).filter(function(k){ return k!=="_README"; });
+      if(!authored){
+        schedStatus = "puzzles.json loaded fine, but it has no entry for "+DATE+
+          ". Dates in the file: "+(dates.length? dates.join(", ") : "none");
+      }else if(!validDay(authored)){
+        schedStatus = "the entry for "+DATE+" is incomplete. It has "+
+          (Array.isArray(authored)? authored.length : 0)+
+          " item(s); it needs 12, each with a, b, c and a non-empty ans list.";
+      }else{
+        DAILY = authored.slice(0,12).map(function(q){ return {a:q.a, b:q.b, c:q.c, ans:q.ans, d:q.d||3}; });
+      }
+    }
+    boot();
+  });
+})();
+</script>
+</body>
+</html>
