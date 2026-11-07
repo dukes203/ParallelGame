@@ -42,11 +42,26 @@
     {"a": "Nintendo", "b": "Playing Cards", "c": "Amazon", "ans": ["Books"]},
     {"a": "H", "b": "Hydrogen", "c": "K", "ans": ["potasium", "potassium"]},
     {"a": "Iron and Carbon", "b": "Steel", "c": "Copper and Tin", "ans": ["bronze"]},
-    {"a": "AAAA", "b": "BBBB", "c": "CCCC", "ans": ["DDDD", "EEEE"]},
-    {"a": "AAAA", "b": "BBBB", "c": "CCCC", "ans": ["DDDD", "EEEE"]}
+    {"a": "Lesotho", "b": "South Africa", "c": "San Marino", "ans": ["Italy"]},
+    {"a": "Bell", "b": "Telephone", "c": "Gutenburg", "ans": ["Printing Press", "Print", "letterpress"]}
   ],
 
       "2026-11-08": [
+    {"a": "Rolex", "b": "Watches", "c": "Zippo", "ans": ["lighter", "lighters", "igniter"]},
+    {"a": "Jordan", "b": "Pippen", "c": "Curry", "ans": ["Thompson", "Klay"]},
+    {"a": "Taylor", "b": "Travis", "c": "Zendaya", "ans": ["Tom Holland", "Holland", "Thomas", "Tom"]},
+    {"a": "Tanzania", "b": "Swahili", "c": "Iran", "ans": ["Persian", "Farsi"]},
+    {"a": "Positive", "b": "Bullish", "c": "Negative", "ans": ["bear", "bearish"]},
+    {"a": "Beginning", "b": "Prefix", "c": "End", "ans": ["suffix", "postfix"]},
+    {"a": "Freezing", "b": "32", "c": "Boiling", "ans": ["212"]},
+    {"a": "Waterloo", "b": "Napoleon", "c": "Stalingrad", "ans": ["Hitler", "Germany", "Adolf", "Nazis", "axis"]},
+    {"a": "Baby", "b": "Justin Bieber", "c": "levitating", "ans": ["Dua Lipa", "Dua"]},
+    {"a": "2012", "b": "Obama", "c": "1976", "ans": ["Carter", "Jimmy"]},
+    {"a": "E", "b": "MC^2", "c": "PV", "ans": ["nrt"]},
+    {"a": "Pulchritude", "b": "Beauty", "c": "Verisimilitude", "ans": ["Truth", "Factuality", "Reality", "Authenticity", "Authentic"]}
+  ],
+  
+        "2026-11-09": [
     {"a": "AAAA", "b": "BBBB", "c": "CCCC", "ans": ["DDDD", "EEEE"]},
     {"a": "AAAA", "b": "BBBB", "c": "CCCC", "ans": ["DDDD", "EEEE"]},
     {"a": "AAAA", "b": "BBBB", "c": "CCCC", "ans": ["DDDD", "EEEE"]},
