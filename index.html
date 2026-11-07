@@ -191,7 +191,7 @@
       <div class="leaf"><div class="sheet">
         <div class="sub" id="pz-label">Parallel &middot; i</div>
         <ol class="rules">
-          <li><span class="n">i</span><span>Each entry: <b>X is to Y what Z is to ___</b>. Write the missing word.</span></li>
+          <li><span class="n">i</span><span>Each entry: <b>X is to Y as Z is to ___</b>. Write the missing word.</span></li>
           <li><span class="n">ii</span><span>Twelve entries, ninety seconds on the clock.</span></li>
           <li><span class="n">iii</span><span>Right answers set themselves down. Skip to leave one for later, or tap a number to go back.</span></li>
         </ol>
@@ -405,7 +405,7 @@
   function renderPrompt(){
     var q=Q[idx];
     $("prompt").innerHTML = '<b>'+esc(q.a)+'</b> <em>is to</em> <b>'+esc(q.b)+
-      '</b> <em>what</em><br><b>'+esc(q.c)+'</b> <em>is to</em>';
+      '</b> <em>as</em><br><b>'+esc(q.c)+'</b> <em>is to</em>';
     $("qnum").textContent = solvedCount();
     renderPrior();
     var inp=$("input");
